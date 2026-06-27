@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Breastfeeding Calorie Calculator — Daily Calories for Nursing Moms</title>
+  <meta name="description" content="Free breastfeeding calorie calculator. Estimate daily calories, macros, and hydration for nursing mothers based on weight, activity, and feeding mode. CDC &amp; IOM informed.">
+  <meta name="google-site-verification" content="uz_j2c_UOuyTXyW6W87egnN8gHCyfSqm3kyY_XEx62w" />
+  <meta name="theme-color" content="#0D9488">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --primary:#0D9488;--primary-dark:#0F766E;--primary-light:#CCFBF1;
+      --accent:#F472B6;--ink:#134E4A;--muted:#64748B;--line:#E2E8F0;
+      --bg:#F0FDFA;--card:#fff;--radius:16px;
+      --shadow:0 8px 32px rgba(13,148,136,.09);
+      --ok:#059669;--warn:#D97706;
+    }
+    body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:#1E293B;line-height:1.65;font-size:15px;overflow:hidden}
+    #app-shell{position:fixed;inset:0;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;z-index:2147483647;background:var(--bg);pointer-events:auto}
+    #main-app{position:relative;z-index:100;pointer-events:auto}
+    .card,.sidebar-card,.guide-card,details,.input,.select,.btn-main,.btn-ghost,summary,label,header,footer,section.hero{position:relative;pointer-events:auto;touch-action:manipulation}
+    .container{max-width:1080px;margin:0 auto;padding:0 20px}
+    header{background:rgba(255,255,255,.93);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:16px 0;position:sticky;top:0;z-index:50}
+    .logo{font-size:20px;font-weight:800;color:var(--primary);text-decoration:none}
+    .hero{padding:40px 0 22px;text-align:center;background:linear-gradient(165deg,#CCFBF1 0%,#FCE7F3 45%,#F0FDFA 100%)}
+    .hero-badge{display:inline-block;background:var(--primary-light);color:var(--primary-dark);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:6px 14px;border-radius:999px;border:1px solid #99F6E4;margin-bottom:12px}
+    .hero h1{font-size:clamp(26px,4vw,36px);font-weight:800;letter-spacing:-.03em;margin-bottom:8px;color:#134E4A}
+    .hero p{max-width:640px;margin:0 auto;color:var(--muted);font-size:15px}
+    .layout{display:grid;grid-template-columns:1fr 280px;gap:24px;align-items:start;margin-bottom:32px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:28px;position:relative;z-index:10}
+    .card h2{font-size:18px;font-weight:800;margin-bottom:4px;color:#134E4A}
+    .card .sub{font-size:13px;color:var(--muted);margin-bottom:20px}
+    .form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:16px}
+    label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:5px}
+    .input,.select{width:100%;padding:12px 13px;border:1.5px solid var(--line);border-radius:11px;font:inherit;font-size:14px;font-weight:600;background:#fff;outline:none;pointer-events:auto;-webkit-user-select:text;user-select:text}
+    .input:focus,.select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(13,148,136,.12)}
+    .select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath fill='%2364748B' d='M0 0l6 8 6-8z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+    .hint{font-size:12px;color:var(--muted);padding:11px 12px;background:#F8FAFC;border-radius:10px;border-left:3px solid var(--accent);margin-bottom:16px}
+    .unit-row{display:flex;gap:8px;margin-bottom:16px}
+    .unit-btn{flex:1;padding:10px;border:1.5px solid var(--line);border-radius:10px;background:#fff;font:inherit;font-size:13px;font-weight:700;cursor:pointer;color:var(--muted);touch-action:manipulation}
+    .unit-btn.active{border-color:var(--primary);background:var(--primary-light);color:var(--primary-dark)}
+    .btn-row{display:flex;gap:10px;flex-wrap:wrap}
+    .btn-main{flex:1;min-width:140px;padding:14px 20px;background:linear-gradient(135deg,#14B8A6,#0D9488);color:#fff;border:none;border-radius:11px;font:inherit;font-size:15px;font-weight:800;cursor:pointer;touch-action:manipulation;pointer-events:auto}
+    .btn-main:hover{filter:brightness(1.05)}
+    .btn-ghost{padding:14px 20px;border:1.5px solid var(--line);border-radius:11px;background:#fff;font:inherit;font-size:14px;font-weight:700;cursor:pointer;color:var(--muted);touch-action:manipulation;pointer-events:auto}
+    .results{display:none;margin-top:24px;padding-top:22px;border-top:1px solid var(--line)}
+    .results.show{display:block}
+    .result-hero{text-align:center;background:linear-gradient(145deg,#14B8A6,#F472B6);color:#fff;border-radius:18px;padding:26px;margin-bottom:16px}
+    .result-hero .lbl{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;opacity:.92}
+    .result-hero .val{font-size:clamp(28px,6vw,40px);font-weight:900;line-height:1.2;margin:8px 0 4px}
+    .result-hero .sub{font-size:14px;opacity:.9}
+    .result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+    .result-cell{background:#F8FAFC;border:1px solid var(--line);border-radius:12px;padding:14px;text-align:center}
+    .result-cell .k{font-size:10px;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+    .result-cell .v{font-size:14px;font-weight:800}
+    .result-cell .v.ok{color:var(--ok)}
+    .result-cell .v.warn{color:var(--warn)}
+    .cal-bar-wrap{margin:18px 0}
+    .cal-bar-label{font-size:11px;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:8px;display:flex;justify-content:space-between}
+    .cal-bar{display:flex;height:32px;border-radius:999px;overflow:hidden;border:1px solid var(--line)}
+    .cal-seg{display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.2);min-width:0}
+    .cal-seg.bmr{background:#94A3B8}
+    .cal-seg.act{background:#38BDF8}
+    .cal-seg.bf{background:#14B8A6}
+    .cal-seg.goal{background:#F472B6}
+    .cal-legend{display:flex;flex-wrap:wrap;gap:12px;margin:10px 0 18px;font-size:11px;font-weight:600;color:var(--muted)}
+    .cal-legend span{display:flex;align-items:center;gap:5px}
+    .cal-legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+    .macro-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+    .macro-card{padding:16px;border-radius:14px;text-align:center;border:1px solid var(--line)}
+    .macro-card.protein{background:#ECFDF5;border-color:#A7F3D0}
+    .macro-card.carbs{background:#EFF6FF;border-color:#BFDBFE}
+    .macro-card.fat{background:#FFF7ED;border-color:#FED7AA}
+    .macro-card .mn{font-size:10px;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+    .macro-card .mg{font-size:20px;font-weight:900;color:#134E4A}
+    .macro-card .mp{font-size:11px;color:var(--muted);margin-top:2px}
+    .summary-table{width:100%;border-collapse:collapse;font-size:14px}
+    .summary-table td{padding:9px 0;border-bottom:1px solid var(--line)}
+    .summary-table td:first-child{color:var(--muted);font-weight:600;width:52%}
+    .summary-table td:last-child{font-weight:700;text-align:right}
+    .note-box{margin-top:14px;padding:12px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;font-size:12px;color:#92400E;line-height:1.6}
+    .tip-box{margin-top:12px;padding:12px;background:var(--primary-light);border:1px solid #99F6E4;border-radius:10px;font-size:13px;color:var(--primary-dark);line-height:1.6}
+    .warn-box{margin-top:12px;padding:12px;background:#FEF2F2;border:1px solid #FECACA;border-radius:10px;font-size:12px;color:#991B1B;line-height:1.6}
+    .snack-list{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}
+    .snack-item{padding:10px 12px;background:#F8FAFC;border:1px solid var(--line);border-radius:10px;font-size:12px;font-weight:600;color:#475569}
+    .sidebar{display:flex;flex-direction:column;gap:14px}
+    .sidebar-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+    .sidebar-card h3{font-size:14px;font-weight:800;margin-bottom:10px}
+    .ref-table{width:100%;font-size:12px;border-collapse:collapse}
+    .ref-table td{padding:6px 0;border-bottom:1px dashed var(--line)}
+    .ref-table td:last-child{text-align:right;font-weight:700}
+    .guide-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin:24px 0}
+    .guide-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+    .guide-card h2{font-size:16px;font-weight:800;margin-bottom:8px}
+    .guide-card p,.guide-card li{font-size:14px;color:var(--muted)}
+    .guide-card ul{padding-left:18px;margin-top:6px}
+    details{background:#fff;border:1px solid var(--line);border-radius:12px;margin-bottom:8px}
+    details[open]{border-color:var(--primary)}
+    summary{padding:13px 16px;font-weight:700;cursor:pointer;list-style:none;font-size:14px}
+    summary::-webkit-details-marker{display:none}
+    details p{padding:0 16px 14px;font-size:13px;color:var(--muted);line-height:1.65}
+    footer{text-align:center;padding:24px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);background:#fff}
+    .ad-top,.ad-mid,.ad-sidebar,.ad-bottom{display:flex;justify-content:center;align-items:center;margin:12px auto;overflow:hidden!important;position:relative;z-index:1;flex-shrink:0;transform:translateZ(0);contain:strict;isolation:isolate;clip-path:inset(0 round 0)}
+    .ad-top>*,.ad-mid>*,.ad-sidebar>*,.ad-bottom>*{max-width:100%!important;max-height:100%!important;overflow:hidden!important}
+    .ad-top iframe,.ad-mid iframe,.ad-sidebar iframe,.ad-bottom iframe{max-width:100%!important;max-height:100%!important;border:0;display:block;pointer-events:auto}
+    .ad-top{width:100%;max-width:728px;height:90px!important;max-height:90px!important;min-height:90px}
+    .ad-mid{width:100%;max-width:728px;height:90px!important;max-height:90px!important;min-height:90px;margin:8px auto 24px}
+    .ad-sidebar{width:100%;max-width:300px;height:250px!important;max-height:250px!important;min-height:250px;border-radius:var(--radius)}
+    .ad-bottom{width:100%;max-width:320px;height:50px!important;max-height:50px!important;min-height:50px}
+    @media(max-width:860px){.layout,.form-grid,.result-grid,.guide-grid,.macro-grid,.snack-list{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<script>
+(function(){
+  function blockOverlay(n){
+    if(!n||n.nodeType!==1||n.id==='app-shell')return;
+    n.style.pointerEvents='none';
+    n.style.setProperty('z-index','0','important');
+    var cs=window.getComputedStyle(n);
+    if(cs.position==='fixed'||cs.position==='absolute'){
+      var z=parseInt(cs.zIndex,10);
+      if(!isNaN(z)&&z>1)n.style.setProperty('display','none','important');
+    }
+  }
+  function watch(){
+    if(!document.body)return;
+    Array.prototype.forEach.call(document.body.children,function(el){
+      if(el.id!=='app-shell')blockOverlay(el);
+    });
+    new MutationObserver(function(muts){
+      muts.forEach(function(m){
+        Array.prototype.forEach.call(m.addedNodes,function(n){
+          if(n.parentNode===document.body)blockOverlay(n);
+        });
+      });
+    }).observe(document.body,{childList:true});
+  }
+  if(document.body)watch();
+  else document.addEventListener('DOMContentLoaded',watch);
+})();
+</script>
+<div id="app-shell">
+<header><div class="container"><a href="#" class="logo">Breastfeeding Calorie Calculator</a></div></header>
+
+<section class="hero">
+  <div class="container">
+    <span class="hero-badge">Postpartum nutrition</span>
+    <h1>Breastfeeding Calorie Calculator</h1>
+    <p>Estimate your daily calorie target, macros, and hydration while nursing — based on body stats, activity, and feeding mode. Inspired by CDC, KellyMom &amp; BabyCenter tools.</p>
+  </div>
+</section>
+
+<div class="container">
+  <div class="ad-top" id="ad-top">
+    <!-- 顶部广告脚本（加了属性） -->
+    <script data-cfasync="false" async src="https://adsterra-xxx1.js"></script>
+  </div>
+</div>
+
+<div id="main-app">
+<div class="container">
+  <div class="layout">
+    <main class="card">
+      <h2>Calculate your daily calories</h2>
+      <p class="sub">Uses the Mifflin-St Jeor equation for baseline metabolism, then adds a lactation bonus per CDC/IOM guidelines (330–500 kcal for exclusive breastfeeding).</p>
+
+      <div class="unit-row">
+        <button type="button" class="unit-btn active" id="btnMetric" data-unit="metric">Metric (kg / cm)</button>
+        <button type="button" class="unit-btn" id="btnUS" data-unit="us">US (lb / ft·in)</button>
+      </div>
+
+      <div class="form-grid">
+        <div>
+          <label for="age">Age (years)</label>
+          <input class="input" type="number" id="age" value="30" min="16" max="55" inputmode="numeric">
+        </div>
+        <div>
+          <label for="weight" id="weightLabel">Current weight (kg)</label>
+          <input class="input" type="number" id="weight" value="68" min="35" max="200" step="0.1" inputmode="decimal">
+        </div>
+        <div id="heightMetricWrap">
+          <label for="heightCm">Height (cm)</label>
+          <input class="input" type="number" id="heightCm" value="165" min="130" max="210" inputmode="numeric">
+        </div>
+        <div id="heightUSWrap" style="display:none">
+          <label>Height (ft · in)</label>
+          <div style="display:flex;gap:8px">
+            <input class="input" type="number" id="heightFt" value="5" min="4" max="6" inputmode="numeric" style="flex:1">
+            <input class="input" type="number" id="heightIn" value="5" min="0" max="11" inputmode="numeric" style="flex:1">
+          </div>
+        </div>
+        <div>
+          <label for="activity">Activity level</label>
+          <select class="select" id="activity">
+            <option value="1.2">Sedentary (desk job, little exercise)</option>
+            <option value="1.375" selected>Light (walking, gentle yoga)</option>
+            <option value="1.55">Moderate (3–4 workouts/week)</option>
+            <option value="1.725">Active (daily exercise)</option>
+          </select>
+        </div>
+        <div>
+          <label for="feeding">Feeding mode</label>
+          <select class="select" id="feeding">
+            <option value="exclusive" selected>Exclusive breastfeeding</option>
+            <option value="mostly">Mostly breastfeeding (1–2 formula feeds/day)</option>
+            <option value="mixed">Mixed feeding (half breast / half formula)</option>
+            <option value="pumping">Exclusive pumping</option>
+            <option value="none">Not breastfeeding</option>
+          </select>
+        </div>
+        <div>
+          <label for="babyAge">Baby's age</label>
+          <select class="select" id="babyAge">
+            <option value="0-3" selected>0–3 months (early postpartum)</option>
+            <option value="4-6">4–6 months</option>
+            <option value="7-12">7–12 months (solids started)</option>
+            <option value="12+">12+ months</option>
+          </select>
+        </div>
+        <div>
+          <label for="twins">Multiple babies</label>
+          <select class="select" id="twins">
+            <option value="1" selected>One baby</option>
+            <option value="2">Twins (nursing both)</option>
+          </select>
+        </div>
+        <div>
+          <label for="goal">Weight goal</label>
+          <select class="select" id="goal">
+            <option value="maintain" selected>Maintain weight</option>
+            <option value="lose">Gradual loss (~0.5 lb/week)</option>
+            <option value="nourish">Prioritize milk supply (+150 kcal)</option>
+          </select>
+        </div>
+        <div>
+          <label for="bmiNote">Body type</label>
+          <select class="select" id="bmiNote">
+            <option value="normal" selected>Normal BMI (19–25)</option>
+            <option value="low">Lower BMI / less fat reserve</option>
+            <option value="high">Higher BMI / more fat reserve</option>
+          </select>
+        </div>
+      </div>
+      <p class="hint">KellyMom notes most nursing mothers do well on 1,800–2,200+ kcal/day. Dropping below ~1,500–1,800 kcal may affect milk supply — especially in the first 6 months.</p>
+
+      <div class="btn-row">
+        <button type="button" class="btn-main" id="btnCalc">Calculate calories</button>
+        <button type="button" class="btn-ghost" id="btnReset">Reset</button>
+      </div>
+
+      <div class="results" id="results"></div>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-card">
+        <h3>Lactation calorie add-ons</h3>
+        <table class="ref-table">
+          <tr><td>Exclusive BF (0–6 mo)</td><td>+330–500</td></tr>
+          <tr><td>Mostly breastfeeding</td><td>+280–350</td></tr>
+          <tr><td>Mixed feeding</td><td>+200–250</td></tr>
+          <tr><td>Exclusive pumping</td><td>+330–450</td></tr>
+          <tr><td>Twins (exclusive)</td><td>+600–800</td></tr>
+          <tr><td>After 6 months</td><td>+200–300</td></tr>
+        </table>
+      </div>
+      <div class="sidebar-card">
+        <h3>Quick example</h3>
+        <p style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:10px">30 yrs · 68 kg · 165 cm · Light activity · Exclusive BF · 2-month-old → ~2,450 kcal/day.</p>
+        <button type="button" class="btn-ghost" style="width:100%" id="btnExample">Load example</button>
+      </div>
+      <div class="sidebar-card">
+        <h3>Smart snack ideas (~300 kcal)</h3>
+        <ul style="list-style:none;font-size:12px;color:var(--muted);line-height:1.9">
+          <li>· Greek yogurt + banana + honey</li>
+          <li>· Whole-grain toast + avocado + egg</li>
+          <li>· Apple + 2 tbsp peanut butter</li>
+          <li>· Trail mix + cheese stick</li>
+        </ul>
+      </div>
+      <div class="ad-sidebar" id="ad-sidebar"></div>
+    </aside>
+  </div>
+
+  <section class="guide-grid">
+    <div class="guide-card">
+      <h2>How this calculator works</h2>
+      <p>We estimate your basal metabolic rate (BMR) with the Mifflin-St Jeor equation, multiply by your activity factor for maintenance calories, then add a lactation increment based on feeding intensity and baby age — aligned with CDC and Dietary Guidelines for Americans recommendations.</p>
+    </div>
+    <div class="guide-card">
+      <h2>Nutrition priorities while nursing</h2>
+      <ul>
+        <li>Protein: ~1.1 g per kg body weight to support tissue repair</li>
+        <li>Omega-3 DHA: 200–300 mg/day (fatty fish or supplement)</li>
+        <li>Iron &amp; calcium: continue prenatal or postnatal vitamins if advised</li>
+        <li>Hydration: drink to thirst — ~3+ liters/day for many nursing moms</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="ad-mid" id="ad-mid">
+    <!-- 文中广告脚本（加了属性） -->
+    <script data-cfasync="false" async src="https://adsterra-xxx2.js"></script>
+  </div>
+
+  <section style="margin-bottom:28px">
+    <h2 style="font-size:18px;font-weight:800;margin-bottom:12px">FAQ</h2>
+    <details>
+      <summary>How many extra calories do I need while breastfeeding?</summary>
+      <p>The CDC recommends an additional 330–400 kcal per day for well-nourished, exclusively breastfeeding mothers compared with pre-pregnancy intake. Many guidelines cite up to 500 kcal for lean or very active women. Partial breastfeeding requires proportionally fewer extra calories.</p>
+    </details>
+    <details>
+      <summary>Can I lose weight while breastfeeding?</summary>
+      <p>Yes — gradual weight loss of about 0.5 kg (1 lb) per week is generally considered safe after the first 6–8 weeks, if calorie intake stays above ~1,800 kcal and milk supply remains stable. Avoid crash diets below 1,500 kcal.</p>
+    </details>
+    <details>
+      <summary>Do I need to eat more if I'm pumping?</summary>
+      <p>Exclusive pumping burns similar energy to direct nursing. If you pump the full volume your baby would consume, use the same lactation add-on as exclusive breastfeeding.</p>
+    </details>
+    <details>
+      <summary>Why is my result different from other apps?</summary>
+      <p>Apps vary in BMR formulas, activity multipliers, and lactation increments. This tool uses Mifflin-St Jeor plus CDC/IOM ranges — treat the output as a starting estimate and adjust based on hunger, energy, and milk output.</p>
+    </details>
+  </section>
+</div>
+</div>
+
+<div class="container">
+  <div class="ad-bottom" id="ad-bottom">
+    <!-- 底部广告脚本（加了属性） -->
+    <script data-cfasync="false" async src="https://adsterra-xxx3.js"></script>
+  </div>
+</div>
+
+<footer>
+  <div class="container">Breastfeeding Calorie Calculator — inspired by <a href="https://www.cdc.gov/breastfeeding-special-circumstances/hcp/diet-micronutrients/maternal-diet.html" style="color:var(--primary)">CDC</a>, KellyMom &amp; BabyCenter. Not medical advice.</div>
+</footer>
+</div>
+
+<script>
+function byId(id){return document.getElementById(id);}
+
+var unitSystem='metric';
+
+function setUnit(u){
+  unitSystem=u;
+  byId('btnMetric').classList.toggle('active',u==='metric');
+  byId('btnUS').classList.toggle('active',u==='us');
+  byId('heightMetricWrap').style.display=u==='metric'?'block':'none';
+  byId('heightUSWrap').style.display=u==='us'?'block':'none';
+  byId('weightLabel').textContent=u==='metric'?'Current weight (kg)':'Current weight (lb)';
+  if(u==='us'){
+    var kg=parseFloat(byId('weight').value)||68;
+    byId('weight').value=Math.round(kg*2.20462*10)/10;
+    var cm=parseFloat(byId('heightCm').value)||165;
+    byId('heightFt').value=Math.floor(cm/30.48);
+    byId('heightIn').value=Math.round((cm/2.54)%12);
+  }else{
+    var lb=parseFloat(byId('weight').value)||150;
+    byId('weight').value=Math.round(lb/2.20462*10)/10;
+  }
+}
+
+function getWeightKg(){
+  var w=parseFloat(byId('weight').value);
+  if(!isFinite(w)||w<=0)return NaN;
+  return unitSystem==='us'?w/2.20462:w;
+}
+
+function getHeightCm(){
+  if(unitSystem==='metric'){
+    var cm=parseFloat(byId('heightCm').value);
+    return isFinite(cm)&&cm>0?cm:NaN;
+  }
+  var ft=parseFloat(byId('heightFt').value)||0;
+  var inch=parseFloat(byId('heightIn').value)||0;
+  return (ft*12+inch)*2.54;
+}
+
+function calcBMR(kg,cm,age){
+  return 10*kg+6.25*cm-5*age-161;
+}
+
+function lactationBonus(feeding,babyAge,twins,bmiNote){
+  if(feeding==='none')return 0;
+  var base=0;
+  if(feeding==='exclusive')base=450;
+  else if(feeding==='mostly')base=320;
+  else if(feeding==='mixed')base=225;
+  else if(feeding==='pumping')base=400;
+  if(babyAge==='7-12')base*=0.72;
+  else if(babyAge==='12+')base*=0.55;
+  else if(babyAge==='4-6')base*=0.92;
+  if(twins==='2'&&feeding!=='none'&&feeding!=='mixed')base=Math.max(base*1.65,600);
+  if(bmiNote==='low')base+=50;
+  else if(bmiNote==='high')base-=40;
+  return Math.round(base);
+}
+
+function minCalories(feeding){
+  return feeding==='none'?1500:1800;
+}
+
+function goalAdjust(goal){
+  if(goal==='lose')return -300;
+  if(goal==='nourish')return 150;
+  return 0;
+}
+
+function calcMacros(total,kg){
+  var proteinG=Math.round(kg*1.1);
+  var proteinCal=proteinG*4;
+  var fatPct=0.28;
+  var fatCal=Math.round(total*fatPct);
+  var fatG=Math.round(fatCal/9);
+  var carbCal=Math.max(total-proteinCal-fatCal,0);
+  var carbG=Math.round(carbCal/4);
+  return{proteinG,fatG,carbG,proteinCal,fatCal,carbCal};
+}
+
+function hydrationLiters(feeding){
+  return feeding==='none'?2.4:3.1;
+}
+
+function snackIdeas(extra){
+  var all=[
+    'Greek yogurt + banana + honey (~280 kcal)',
+    'Avocado toast + boiled egg (~320 kcal)',
+    'Apple + 2 tbsp peanut butter (~270 kcal)',
+    'Hummus + whole pita + veggies (~300 kcal)',
+    'Oatmeal + berries + almond butter (~350 kcal)',
+    'Cheese stick + crackers + grapes (~250 kcal)'
+  ];
+  return extra>=350?all.slice(0,4):all.slice(2,6);
+}
+
+function buildCalBar(bmr,activityExtra,bfBonus,goalAdj,total){
+  var parts=[
+    {k:'BMR',v:Math.round(bmr),cls:'bmr'},
+    {k:'Activity',v:Math.round(activityExtra),cls:'act'},
+    {k:'Breastfeeding',v:Math.round(bfBonus),cls:'bf'},
+    {k:'Goal adj.',v:Math.round(goalAdj),cls:'goal'}
+  ].filter(function(p){return p.v>0;});
+  var sum=parts.reduce(function(a,p){return a+p.v;},0)||1;
+  var segs=parts.map(function(p){
+    var pct=Math.max(p.v/sum*100,8);
+    return '<div class="cal-seg '+p.cls+'" style="flex:'+p.v+'">'+p.k+'</div>';
+  }).join('');
+  return '<div class="cal-bar-wrap"><div class="cal-bar-label"><span>Calorie breakdown</span><span>'+total+' kcal total</span></div><div class="cal-bar">'+segs+'</div><div class="cal-legend">'+
+    '<span><i style="background:#94A3B8"></i> BMR</span><span><i style="background:#38BDF8"></i> Activity</span><span><i style="background:#14B8A6"></i> Lactation</span><span><i style="background:#F472B6"></i> Goal</span></div></div>';
+}
+
+function feedingLabel(v){
+  return{exclusive:'Exclusive breastfeeding',mostly:'Mostly breastfeeding',mixed:'Mixed feeding',pumping:'Exclusive pumping',none:'Not breastfeeding'}[v]||v;
+}
+
+function calculate(){
+  try{
+    var age=parseInt(byId('age').value,10);
+    var kg=getWeightKg();
+    var cm=getHeightCm();
+    var act=parseFloat(byId('activity').value);
+    var feeding=byId('feeding').value;
+    var babyAge=byId('babyAge').value;
+    var twins=byId('twins').value;
+    var goal=byId('goal').value;
+    var bmiNote=byId('bmiNote').value;
+
+    if(!isFinite(age)||age<16||age>55){alert('Please enter a valid age (16–55).');return;}
+    if(!isFinite(kg)||kg<35||kg>200){alert('Please enter a valid weight.');return;}
+    if(!isFinite(cm)||cm<130||cm>210){alert('Please enter a valid height.');return;}
+
+    var bmr=calcBMR(kg,cm,age);
+    var maintenance=bmr*act;
+    var activityExtra=maintenance-bmr;
+    var bfBonus=lactationBonus(feeding,babyAge,twins,bmiNote);
+    var goalAdj=goalAdjust(goal);
+    var raw=Math.round(maintenance+bfBonus+goalAdj);
+    var floor=minCalories(feeding);
+    var total=Math.max(raw,floor);
+    var clamped=raw<floor;
+    var bmi=kg/((cm/100)*(cm/100));
+    var macros=calcMacros(total,kg);
+    var water=hydrationLiters(feeding);
+    var snacks=snackIdeas(bfBonus);
+    var res=byId('results');
+
+    var warnHtml=clamped?'<div class="warn-box"><strong>Minimum applied:</strong> Your calculated target ('+raw+' kcal) was below the safe floor of '+floor+' kcal for nursing mothers. We adjusted upward to protect milk supply.</div>':'';
+    var goalNote=goal==='lose'?'<p class="note-box"><strong>Weight loss note:</strong> A 300 kcal deficit targets ~0.5 lb/week loss. If milk supply dips or you feel fatigued, switch to "Maintain" or "Prioritize milk supply."</p>':'';
+
+    res.innerHTML=
+      '<div class="result-hero"><div class="lbl">Your daily calorie target</div><div class="val">'+total.toLocaleString()+' kcal</div><div class="sub">~'+(total/3).toFixed(0)+' kcal per main meal + snacks</div></div>'+
+      '<div class="result-grid">'+
+        '<div class="result-cell"><div class="k">Basal metabolism</div><div class="v">'+Math.round(bmr)+' kcal</div></div>'+
+        '<div class="result-cell"><div class="k">Lactation bonus</div><div class="v ok">+'+bfBonus+' kcal</div></div>'+
+        '<div class="result-cell"><div class="k">Hydration goal</div><div class="v">'+water+' L/day</div></div>'+
+        '<div class="result-cell"><div class="k">Maintenance (no BF)</div><div class="v">'+Math.round(maintenance)+' kcal</div></div>'+
+        '<div class="result-cell"><div class="k">BMI</div><div class="v">'+bmi.toFixed(1)+'</div></div>'+
+        '<div class="result-cell"><div class="k">Goal adjustment</div><div class="v'+(goalAdj<0?' warn':'')+'">'+(goalAdj>=0?'+':'')+goalAdj+' kcal</div></div>'+
+      '</div>'+
+      buildCalBar(bmr,activityExtra,bfBonus,goalAdj,total)+
+      '<h3 style="font-size:14px;font-weight:800;margin-bottom:10px">Suggested macros</h3>'+
+      '<div class="macro-grid">'+
+        '<div class="macro-card protein"><div class="mn">Protein</div><div class="mg">'+macros.proteinG+'g</div><div class="mp">'+macros.proteinCal+' kcal · ~1.1 g/kg</div></div>'+
+        '<div class="macro-card carbs"><div class="mn">Carbohydrates</div><div class="mg">'+macros.carbG+'g</div><div class="mp">'+macros.carbCal+' kcal · energy &amp; fiber</div></div>'+
+        '<div class="macro-card fat"><div class="mn">Fat</div><div class="mg">'+macros.fatG+'g</div><div class="mp">'+macros.fatCal+' kcal · hormones &amp; DHA</div></div>'+
+      '</div>'+
+      '<h3 style="font-size:14px;font-weight:800;margin:18px 0 10px">Summary</h3>'+
+      '<table class="summary-table">'+
+        '<tr><td>Age / weight / height</td><td>'+age+' yrs · '+kg.toFixed(1)+' kg · '+cm.toFixed(0)+' cm</td></tr>'+
+        '<tr><td>Activity multiplier</td><td>×'+act+'</td></tr>'+
+        '<tr><td>Feeding mode</td><td>'+feedingLabel(feeding)+'</td></tr>'+
+        '<tr><td>Baby age band</td><td>'+byId('babyAge').selectedOptions[0].text+'</td></tr>'+
+        '<tr><td>Weight goal</td><td>'+byId('goal').selectedOptions[0].text+'</td></tr>'+
+        '<tr><td>Extra calories for nursing</td><td>+'+bfBonus+' kcal/day</td></tr>'+
+        '<tr><td>Safe minimum floor</td><td>'+floor+' kcal/day</td></tr>'+
+      '</table>'+
+      '<p class="tip-box"><strong>Tip:</strong> Spread calories across 3 meals + 2–3 snacks. One-handed snacks while nursing help hit your target without skipping meals.</p>'+
+      goalNote+
+      warnHtml+
+      '<h3 style="font-size:14px;font-weight:800;margin:16px 0 8px">Snack ideas to cover lactation calories</h3>'+
+      '<div class="snack-list">'+snacks.map(function(s){return '<div class="snack-item">'+s+'</div>';}).join('')+'</div>'+
+      '<div class="btn-row" style="margin-top:14px"><button type="button" class="btn-ghost" id="btnCopy">Copy results</button></div>';
+
+    res.classList.add('show');
+    window._lastResult=res.innerText;
+    var copyBtn=byId('btnCopy');
+    if(copyBtn)copyBtn.addEventListener('click',copyResults);
+    res.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }catch(err){
+    console.error(err);
+    alert('Calculation error. Please refresh and try again.');
+  }
+}
+
+function resetForm(){
+  unitSystem='metric';
+  byId('btnMetric').classList.add('active');
+  byId('btnUS').classList.remove('active');
+  byId('heightMetricWrap').style.display='block';
+  byId('heightUSWrap').style.display='none';
+  byId('weightLabel').textContent='Current weight (kg)';
+  byId('age').value='30';
+  byId('weight').value='68';
+  byId('heightCm').value='165';
+  byId('activity').value='1.375';
+  byId('feeding').value='exclusive';
+  byId('babyAge').value='0-3';
+  byId('twins').value='1';
+  byId('goal').value='maintain';
+  byId('bmiNote').value='normal';
+  byId('results').classList.remove('show');
+  byId('results').innerHTML='';
+}
+
+function loadExample(){
+  resetForm();
+  byId('age').value='30';
+  byId('weight').value='68';
+  byId('heightCm').value='165';
+  byId('activity').value='1.375';
+  byId('feeding').value='exclusive';
+  byId('babyAge').value='0-3';
+  calculate();
+}
+
+function copyResults(){
+  var t=window._lastResult||'';
+  if(!t)return;
+  navigator.clipboard.writeText(t.replace(/\s+/g,' ').trim()).then(function(){alert('Copied!');}).catch(function(){});
+}
+
+let adsLoaded=false;
+function loadAd(boxId,opts){
+  return new Promise(function(resolve){
+    var box=byId(boxId);
+    if(!box){resolve();return;}
+    window.atOptions=opts;
+    var s=document.createElement('script');
+    s.src='https://www.highperformanceformat.com/'+opts.key+'/invoke.js';
+    s.async=true;
+    s.onload=function(){setTimeout(resolve,150);};
+    s.onerror=resolve;
+    box.appendChild(s);
+  });
+}
+async function loadAds(){
+  if(adsLoaded)return;
+  adsLoaded=true;
+  await loadAd('ad-top',{key:'b31a21d357a574f5abfe948e08497cc3',format:'iframe',height:90,width:728,params:{}});
+  await loadAd('ad-sidebar',{key:'5b2625d96c11d7b599cea160717bc0f6',format:'iframe',height:250,width:300,params:{}});
+  await loadAd('ad-bottom',{key:'5a3667e1a909df26029e97d7d01cf2b5',format:'iframe',height:50,width:320,params:{}});
+}
+
+function init(){
+  byId('btnMetric').addEventListener('click',function(){setUnit('metric');calculate();});
+  byId('btnUS').addEventListener('click',function(){setUnit('us');calculate();});
+  byId('btnCalc').addEventListener('click',function(e){e.stopPropagation();calculate();});
+  byId('btnReset').addEventListener('click',function(e){e.stopPropagation();resetForm();});
+  byId('btnExample').addEventListener('click',function(e){e.stopPropagation();loadExample();});
+  ['age','weight','heightCm','heightFt','heightIn','activity','feeding','babyAge','twins','goal','bmiNote'].forEach(function(id){
+    var el=byId(id);
+    if(el)el.addEventListener('change',calculate);
+  });
+  ['age','weight','heightCm'].forEach(function(id){
+    var el=byId(id);
+    if(el)el.addEventListener('keydown',function(e){if(e.key==='Enter')calculate();});
+  });
+  calculate();
+  loadAds();
+}
+
+window.calculate=calculate;
+window.resetForm=resetForm;
+window.loadExample=loadExample;
+window.copyResults=copyResults;
+
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
+else init();
+</script>
+</body>
+</html>
